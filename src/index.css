@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .el-button {
+    @apply font-medium transition-all duration-200;
+  }
+  .el-button-primary {
+    @apply bg-primary text-white border-transparent hover:bg-primary-hover hover:border-transparent shadow-md hover:shadow-lg;
+  }
+  .el-button-default {
+    @apply bg-white text-text-primary border-border-base hover:text-primary hover:border-primary;
+  }
+}
