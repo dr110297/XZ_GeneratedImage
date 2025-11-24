@@ -149,7 +149,6 @@ const handleLoadMore = () => {
 
         <!-- 卡片信息 -->
         <div class="columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6">
-          123333333333333
           <GalleryCard
             v-for="item in filteredItems"
             :key="item.id"
