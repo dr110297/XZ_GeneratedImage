@@ -192,47 +192,83 @@ onMounted(() => {
 })
 
 const handleGenerate = (currentPrompt = prompt.value) => {
+  // 1. 输入验证 - 确保有生成内容的基础
   if (!currentPrompt && !referenceMedia.value) return
+  
+  // 2. 设置生成状态，用于UI显示加载效果
   isGenerating.value = true
   
-  // 模拟接口=>生成
+  // 3. 模拟API调用
   setTimeout(() => {
+    // 4. 生成完成后重置状态
     isGenerating.value = false
+    
+    // 5. 模拟生成结果
     const newImages = [
       "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
       "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/2dd2239d444142d3afc0fb2db153df7b",
       "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/00bdd1645172419eb35df7fa3dd99321",
       "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/c19331b743f442838b6dd7026c17ae0f"
-    ].slice(0, imageCount.value)
+    ].slice(0, imageCount.value) // 根据用户选择的生成数量截取
 
+    // 6. 会话管理逻辑 - 处理当前会话的更新或创建
     if (currentSession.value) {
+      // 6.1 如果存在当前会话，更新现有会话
       const updatedSession = {
-        ...currentSession.value,
-        totalImages: currentSession.value.totalImages + newImages.length,
+        ...currentSession.value, // 保留原有会话数据
+        totalImages: currentSession.value.totalImages + newImages.length, // 累加图片总数
         messages: [
-          ...currentSession.value.messages,
-          { id: `msg_${Date.now()}_u`, role: 'user' as const, content: currentPrompt, referenceImage: referenceMedia.value || undefined },
-          { id: `msg_${Date.now()}_a`, role: 'assistant' as const, images: newImages }
+          ...currentSession.value.messages, // 保留原有消息
+          // 添加新的用户消息
+          { 
+            id: `msg_${Date.now()}_u`, 
+            role: 'user' as const, 
+            content: currentPrompt, 
+            referenceImage: referenceMedia.value || undefined 
+          },
+          // 添加AI生成的回复消息
+          { 
+            id: `msg_${Date.now()}_a`, 
+            role: 'assistant' as const, 
+            images: newImages 
+          }
         ]
       }
+      // 更新会话状态
       currentSession.value = updatedSession
-      sessions.value = sessions.value.map(s => s.id === updatedSession.id ? updatedSession : s)
+      // 更新会话列表，替换对应的会话
+      sessions.value = sessions.value.map(s => 
+        s.id === updatedSession.id ? updatedSession : s
+      )
     } else {
+      // 6.2 如果没有当前会话，创建新会话
       const newSession: HistorySession = {
         id: `session_${Date.now()}`,
-        date: new Date().toISOString(),
-        firstPrompt: currentPrompt,
-        firstImage: referenceMedia.value || undefined,
-        totalImages: newImages.length,
+        date: new Date().toISOString(), // 当前时间
+        firstPrompt: currentPrompt, // 第一条提示词
+        firstImage: referenceMedia.value || undefined, // 参考图片
+        totalImages: newImages.length, // 本次生成的图片数量
         messages: [
-          { id: `msg_${Date.now()}_u`, role: 'user', content: currentPrompt, referenceImage: referenceMedia.value || undefined },
-          { id: `msg_${Date.now()}_a`, role: 'assistant', images: newImages }
+          // 用户消息
+          { 
+            id: `msg_${Date.now()}_u`, 
+            role: 'user', 
+            content: currentPrompt, 
+            referenceImage: referenceMedia.value || undefined 
+          },
+          // AI回复消息
+          { 
+            id: `msg_${Date.now()}_a`, 
+            role: 'assistant', 
+            images: newImages 
+          }
         ]
       }
+      // 更新状态：将新会话添加到列表开头，并设为当前会话
       sessions.value = [newSession, ...sessions.value]
       currentSession.value = newSession
     }
-  }, 3000)
+  }, 3000) // 模拟3秒生成延迟
 }
 
 const toggleAmazonSuite = () => {
