@@ -5,11 +5,15 @@ import { Search, SlidersHorizontal } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import GalleryCard from '@/components/ui/GalleryCard.vue'
 import GalleryModal from '@/components/ui/GalleryModal.vue'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const activeFilter = ref('全部模型')
+const activeStyle = ref('')
+const sortBy = ref('hot')
 const selectedItem = ref<any>(null)
 const gallerySearch = ref('')
+const loading = ref(false)
 
 // 图库模拟数据
 const GALLERY_ITEMS = Array.from({ length: 24 }).map((_, i) => ({
@@ -30,15 +34,91 @@ const GALLERY_ITEMS = Array.from({ length: 24 }).map((_, i) => ({
   runs: Math.floor(Math.random() * 5000),
   height: i % 3 === 0 ? 'aspect-[2/3]' : i % 3 === 1 ? 'aspect-square' : 'aspect-[3/4]',
   type: (i % 4 === 2 ? 'video' : 'image') as 'image' | 'video',
-  style: ['Cyberpunk', 'Fantasy', 'Abstract', 'Portrait'][i % 4]
+  style: ['Cyberpunk', 'Fantasy', 'Abstract', 'Portrait'][i % 4],
+  category: ['Checkpoint', 'LoRA', 'Embedding', 'VAE'][i % 4],
+  tags: ['二次元', '写实', '3D', '插画', '风景', '人物', '科幻'].slice(i % 3, i % 3 + 2)
 }))
 
 const filteredItems = computed(() => {
-  return GALLERY_ITEMS.filter(item => {
-    if (gallerySearch.value && !item.title.toLowerCase().includes(gallerySearch.value.toLowerCase())) return false
-    return true
-  })
+  let items = [...GALLERY_ITEMS]
+
+  // 搜索过滤
+  if (gallerySearch.value) {
+    const searchLower = gallerySearch.value.toLowerCase()
+    items = items.filter(item =>
+      item.title.toLowerCase().includes(searchLower) ||
+      item.prompt.toLowerCase().includes(searchLower) ||
+      item.style.toLowerCase().includes(searchLower)
+    )
+  }
+
+  // 模型类型过滤
+  if (activeFilter.value !== '全部模型') {
+    items = items.filter(item => item.category === activeFilter.value)
+  }
+
+  // 风格标签过滤
+  if (activeStyle.value) {
+    items = items.filter(item => item.tags.includes(activeStyle.value))
+  }
+
+  // 排序
+  switch (sortBy.value) {
+    case 'hot':
+      // 热门推荐
+      items.sort((a, b) => (b.likes + b.runs / 10) - (a.likes + a.runs / 10))
+      break
+    case 'new':
+      // 最新发布
+      items.reverse()
+      break
+    case 'likes':
+      // 最多喜欢
+      items.sort((a, b) => b.likes - a.likes)
+      break
+    case 'runs':
+      // 最多使用
+      items.sort((a, b) => b.runs - a.runs)
+      break
+  }
+
+  return items
 })
+
+// 模拟API调用获取图库数据
+const fetchGalleryData = async () => {
+  loading.value = true
+  try {
+    // 后端API调用
+    // const response = await fetch('/api/gallery', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     search: gallerySearch.value,
+    //     filter: activeFilter.value,
+    //     style: activeStyle.value,
+    //     sortBy: sortBy.value
+    //   })
+    // })
+    // const data = await response.json()
+
+    // 模拟网络延迟
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    console.log('正在获取图库数据...', {
+      search: gallerySearch.value,
+      filter: activeFilter.value,
+      style: activeStyle.value,
+      sortBy: sortBy.value,
+      resultCount: filteredItems.value.length
+    })
+  } catch (error) {
+    ElMessage.error('加载数据失败，请稍后重试')
+    console.error('fetchGalleryData error:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 const handleUseTemplate = (item: any) => {
   if (item) {
@@ -66,13 +146,64 @@ const handleEditTemplate = (item: any) => {
   }
 }
 
-const handleFilterChange = (filter: string) => {
+// 模型类型筛选点击
+const handleFilterChange = async (filter: string) => {
   activeFilter.value = filter
+  ElMessage.success(`已切换筛选: ${filter}`)
+  await fetchGalleryData()
+}
+
+// 热门搜索点击
+const handleHotSearchClick = async (tag: string) => {
+  gallerySearch.value = tag
+  ElMessage.success(`正在搜索 "${tag}"`)
+  await fetchGalleryData()
+}
+
+// 风格标签点击
+const handleStyleClick = async (tag: string) => {
+  if (activeStyle.value === tag) {
+    activeStyle.value = ''
+    ElMessage.info('已取消风格筛选')
+  } else {
+    activeStyle.value = tag
+    ElMessage.success(`已选择风格: ${tag}`)
+  }
+  await fetchGalleryData()
+}
+
+// 排序变化
+const handleSortChange = async (value: string) => {
+  const sortLabels: Record<string, string> = {
+    hot: '热门推荐',
+    new: '最新发布',
+    likes: '最多喜欢',
+    runs: '最多使用'
+  }
+  ElMessage.success(`已切换排序: ${sortLabels[value]}`)
+  await fetchGalleryData()
 }
 
 // 加载更多
-const handleLoadMore = () => {
-  console.log('加载更多...')
+const handleLoadMore = async () => {
+  loading.value = true
+  try {
+    // 后端API调用
+    // const response = await fetch('/api/gallery/more', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ offset: GALLERY_ITEMS.length })
+    // })
+    // const data = await response.json()
+
+    await new Promise(resolve => setTimeout(resolve, 500))
+    ElMessage.success('已加载更多内容')
+    console.log('加载更多...')
+  } catch (error) {
+    ElMessage.error('加载失败，请稍后重试')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -106,7 +237,7 @@ const handleLoadMore = () => {
         <div>
           <h3 class="font-bold text-text-primary mb-4">风格</h3>
           <div class="flex flex-wrap gap-2">
-            <button v-for="tag in ['二次元', '写实', '3D', '插画', '风景', '人物', '科幻']" :key="tag" class="px-3 py-1 rounded-full bg-bg-card border border-border-base text-xs text-text-secondary hover:border-primary hover:text-primary transition-colors">
+            <button @click="handleStyleClick(tag)" v-for="tag in ['二次元', '写实', '3D', '插画', '风景', '人物', '科幻']" :key="tag" class="px-3 py-1 rounded-full bg-bg-card border border-border-base text-xs text-text-secondary hover:border-primary hover:text-primary transition-colors">
               {{ tag }}
             </button>
           </div>
@@ -114,7 +245,7 @@ const handleLoadMore = () => {
 
         <div>
           <h3 class="font-bold text-text-primary mb-4">排序</h3>
-          <el-select v-model="activeFilter" placeholder="选择排序方式" style="width: 100%;">
+          <el-select v-model="activeFilter" placeholder="选择排序方式" @change="handleSortChange" style="width: 100%;">
             <el-option label="热门推荐" value="hot" />
             <el-option label="最新发布" value="new" />
             <el-option label="最多喜欢" value="likes" />
@@ -141,7 +272,7 @@ const handleLoadMore = () => {
           </div>
           <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
             <span class="text-sm text-text-secondary whitespace-nowrap">热门搜索:</span>
-            <button v-for="tag in ['Cyberpunk', 'Ghibli', 'Portrait', 'Landscape', 'Mecha', 'Watercolor']" :key="tag" class="px-4 py-1.5 rounded-full bg-bg-card border border-border-base text-sm text-text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap" style="flex-shrink: 0;">
+            <button @click="handleHotSearchClick(tag)" v-for="tag in ['Cyberpunk', 'Ghibli', 'Portrait', 'Landscape', 'Mecha', 'Watercolor']" :key="tag" class="px-4 py-1.5 rounded-full bg-bg-card border border-border-base text-sm text-text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap" style="flex-shrink: 0;">
               {{ tag }}
             </button>
           </div>
