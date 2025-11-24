@@ -124,18 +124,19 @@ const isMenuOpen = ref(false)
     <!-- Footer -->
     <footer class="border-t border-border-base bg-bg-base py-12 mt-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div class="space-y-4">
+        <div class="footer-content" style="display: flex;justify-content: space-between;">
+          <div style="width: 25%;">
             <div class="flex items-center gap-2">
               <img :src="logo" alt="Logo" class="w-6 h-6 object-contain" />
               <span class="text-lg font-bold text-text-primary">xzTimes</span>
             </div>
             <p class="text-sm text-text-secondary">
-              小智时代专为跨境而生。
+              为亚马逊 temu，tiktok，shein等众多跨境平台量身定做的套图生成AI。
             </p>
           </div>
-          
-          <div>
+
+          <div style="width: 75%;display: flex;justify-content: space-around;">
+            <div class="footer-column">
             <h3 class="text-sm font-semibold text-text-primary mb-4">产品</h3>
             <ul class="space-y-2 text-sm text-text-secondary">
               <li><RouterLink to="/generate" class="hover:text-primary transition-colors">生成器</RouterLink></li>
@@ -143,7 +144,7 @@ const isMenuOpen = ref(false)
             </ul>
           </div>
 
-          <div>
+          <div class="footer-column">
             <h3 class="text-sm font-semibold text-text-primary mb-4">公司</h3>
             <ul class="space-y-2 text-sm text-text-secondary">
               <li><RouterLink to="#" class="hover:text-primary transition-colors">关于我们</RouterLink></li>
@@ -152,12 +153,13 @@ const isMenuOpen = ref(false)
             </ul>
           </div>
 
-          <div>
+          <div class="footer-column">
             <h3 class="text-sm font-semibold text-text-primary mb-4">法律</h3>
             <ul class="space-y-2 text-sm text-text-secondary">
               <li><RouterLink to="#" class="hover:text-primary transition-colors">隐私政策</RouterLink></li>
               <li><RouterLink to="#" class="hover:text-primary transition-colors">服务条款</RouterLink></li>
             </ul>
+          </div>
           </div>
         </div>
         <div class="mt-12 pt-8 border-t border-border-base text-center text-sm text-text-secondary">

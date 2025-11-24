@@ -102,7 +102,7 @@ const navigateToGallery = () => {
             class="font-bold tracking-tight mb-8 text-text-primary"
             style="font-size: 3rem; line-height: 1; animation: fadeIn 0.7s ease-out;"
           >
-            <span class="text-primary">小智时代</span>专为跨境而生
+            专为跨境而生
           </h1>
           <p
             class="text-xl text-text-secondary mb-8"
