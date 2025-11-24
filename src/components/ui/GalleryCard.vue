@@ -37,13 +37,9 @@ const toggleFavorite = (e: Event) => {
 const handleDownload = (e: Event) => {
   e.stopPropagation()
   emit('download', props.item)
-  // Simple download logic
-  const link = document.createElement('a')
-  link.href = props.item.src
-  link.download = `download-${props.item.id}`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  
+  // 在新窗口中打开下载
+  window.open(props.item.src, '_blank')
 }
 </script>
 

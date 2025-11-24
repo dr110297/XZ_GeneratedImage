@@ -37,6 +37,7 @@ const copyPrompt = () => {
 </script>
 
 <template>
+  <!-- 卡片弹窗内容 -->
   <Dialog
     :isOpen="isOpen"
     @close="$emit('close')"
@@ -44,7 +45,6 @@ const copyPrompt = () => {
     width="60%"
   >
     <div class="flex flex-col md:flex-row gap-6" v-if="item">
-      <!-- Left: Media -->
       <div class="w-full md:w-1/2 space-y-4">
         <div class="aspect-[2/3] rounded-base overflow-hidden bg-bg-page border border-border-base relative group">
           <img 
@@ -56,7 +56,6 @@ const copyPrompt = () => {
             <Play class="w-12 h-12 text-white fill-white/50" />
           </div>
           
-          <!-- Floating Action Buttons on Image -->
           <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button 
               @click="toggleFavorite"
@@ -69,9 +68,7 @@ const copyPrompt = () => {
         </div>
       </div>
       
-      <!-- Right: Info -->
       <div class="w-full md:w-1/2 space-y-6">
-        <!-- User Info if available -->
         <div v-if="item.user" class="flex items-center gap-3 pb-4 border-b border-border-base">
           <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
             <img v-if="item.user.avatar" :src="item.user.avatar" class="w-full h-full object-cover" />
@@ -83,7 +80,6 @@ const copyPrompt = () => {
           </div>
         </div>
 
-        <!-- Style Tag -->
         <div v-if="item.style">
           <label class="text-sm font-medium text-text-secondary block mb-2">风格</label>
           <div class="px-3 py-2 bg-bg-page rounded-base text-primary border border-primary/30 inline-block">
@@ -91,7 +87,6 @@ const copyPrompt = () => {
           </div>
         </div>
         
-        <!-- Prompt -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="text-sm font-medium text-text-secondary">提示词</label>
@@ -108,7 +103,6 @@ const copyPrompt = () => {
           </div>
         </div>
 
-        <!-- Stats if available -->
         <div v-if="item.likes !== undefined" class="grid grid-cols-2 gap-4">
           <div class="p-3 bg-bg-page rounded-base border border-border-base text-center">
             <div class="text-text-secondary text-xs mb-1">喜欢</div>
@@ -133,12 +127,12 @@ const copyPrompt = () => {
         </button>
         
         <div class="flex gap-3 ml-auto">
-          <button 
+          <!-- <button 
             @click="$emit('edit', item)"
             class="el-button el-button-default px-4 py-2 rounded-base"
           >
             编辑内容
-          </button>
+          </button> -->
           <button 
             @click="$emit('use', item)"
             class="el-button el-button-primary px-4 py-2 rounded-base"

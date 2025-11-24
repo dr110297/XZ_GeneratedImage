@@ -66,7 +66,7 @@ const handleRegister = async () => {
   loading.value = true
 
   try {
-    // TODO: 这里应该调用后端API进行注册
+    // 后端接口注册
     // const response = await registerAPI(registerForm.value)
 
     // 模拟注册延迟

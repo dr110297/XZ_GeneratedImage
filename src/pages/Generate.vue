@@ -61,7 +61,7 @@ interface HistorySession {
   messages: Message[]
 }
 
-// Mock Data
+// 历史记录=>模拟数据
 const HISTORY_SESSIONS: HistorySession[] = [
   {
     id: 'session_1',
@@ -133,6 +133,7 @@ const HISTORY_SESSIONS: HistorySession[] = [
   },
 ]
 
+// 卡片内容信息
 const GALLERY_ITEMS = Array.from({ length: 30 }).map((_, i) => ({
   id: `gal_${i}`,
   src: [
@@ -170,7 +171,6 @@ const selectedCategory = ref('All')
 const selectedImage = ref<string | null>(null)
 const selectedGalleryItem = ref<any>(null)
 
-// Session State
 const currentSession = ref<HistorySession | null>(null)
 const sessions = ref<HistorySession[]>(HISTORY_SESSIONS)
 
@@ -195,7 +195,7 @@ const handleGenerate = (currentPrompt = prompt.value) => {
   if (!currentPrompt && !referenceMedia.value) return
   isGenerating.value = true
   
-  // Simulate generation
+  // 模拟接口=>生成
   setTimeout(() => {
     isGenerating.value = false
     const newImages = [
@@ -205,7 +205,6 @@ const handleGenerate = (currentPrompt = prompt.value) => {
       "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/c19331b743f442838b6dd7026c17ae0f"
     ].slice(0, imageCount.value)
 
-    // Create new session or append to current
     if (currentSession.value) {
       const updatedSession = {
         ...currentSession.value,
@@ -263,7 +262,6 @@ const handleMediaUpload = () => {
   input.click()
 }
 
-// Filter Logic
 const filteredHistory = computed(() => {
   return sessions.value.filter(item => {
     const matchesSearch = item.date.includes(historySearch.value) || item.firstPrompt.toLowerCase().includes(historySearch.value.toLowerCase())
@@ -321,7 +319,7 @@ const navigateToGallery = () => {
 
 <template>
   <div class="flex h-[calc(100vh-64px)] md:h-screen md:pt-0 bg-bg-page overflow-hidden">
-    <!-- Left Sidebar: Creative Tools -->
+    <!-- 创作工具 -->
     <div class="w-80 bg-bg-base border-r border-border-base flex flex-col z-20 shadow-lg hidden lg:flex">
       <div class="p-6 border-b border-border-base flex items-center gap-2 text-primary">
         <Sparkles class="w-5 h-5" />
@@ -329,7 +327,7 @@ const navigateToGallery = () => {
       </div>
       
       <div class="flex-1 overflow-y-auto p-6 space-y-8">
-        <!-- Style Selection -->
+        <!-- 艺术风格 -->
         <div>
           <label class="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
             <Palette class="w-4 h-4" /> 艺术风格
@@ -357,7 +355,7 @@ const navigateToGallery = () => {
           </div>
         </div>
 
-        <!-- Aspect Ratio -->
+        <!-- 画面比例 -->
         <div>
           <label class="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
             <Layout class="w-4 h-4" /> 画面比例
@@ -379,7 +377,7 @@ const navigateToGallery = () => {
           </div>
         </div>
 
-        <!-- Image Count -->
+        <!-- 生成数量 -->
         <div>
           <label class="text-sm font-medium text-text-secondary mb-3 flex items-center gap-2">
             <Layers class="w-4 h-4" /> 生成数量
@@ -401,7 +399,7 @@ const navigateToGallery = () => {
             </button>
           </div>
 
-          <!-- Amazon Suite Checkbox -->
+          <!-- 亚马逊套图 -->
           <button 
             @click="toggleAmazonSuite"
             :class="cn(
@@ -422,9 +420,8 @@ const navigateToGallery = () => {
       </div>
     </div>
 
-    <!-- Center: Canvas & Input -->
+    <!-- Center: 内容生成区域 -->
     <div class="flex-1 flex flex-col min-w-0 relative">
-      <!-- Canvas / Preview Area -->
       <div class="flex-1 p-4 md:p-6 overflow-y-auto bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-bg-card to-bg-page">
         <div v-if="currentSession" class="w-full h-full space-y-8 pb-20 px-4 md:px-8">
           <div v-for="msg in currentSession.messages" :key="msg.id" :class="cn('flex gap-4', msg.role === 'assistant' ? 'flex-row' : 'flex-row-reverse')">
@@ -441,7 +438,7 @@ const navigateToGallery = () => {
                 'inline-block p-4 rounded-2xl text-left shadow-sm',
                 msg.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white border border-border-base rounded-tl-none'
               )">
-                <!-- User Message: Reference Image inside text box -->
+                <!-- 用户输入信息 -->
                 <div v-if="msg.role === 'user' && msg.referenceImage" class="mb-3 pb-3 border-b border-white/20">
                   <img 
                     :src="msg.referenceImage" 
@@ -491,10 +488,9 @@ const navigateToGallery = () => {
         </div>
       </div>
 
-      <!-- Input Area -->
+      <!-- 参考图/视图添加样式 -->
       <div class="p-6 border-t border-border-base bg-bg-base shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-20">
         <div class="w-full px-4 md:px-8">
-          <!-- Reference Image Preview -->
           <div v-if="referenceMedia" class="mb-4 flex items-start gap-4 animate-in slide-in-from-bottom-2">
             <div class="relative group w-24 h-24 rounded-base overflow-hidden border border-border-base shadow-sm">
               <video v-if="mediaType === 'video'" :src="referenceMedia" class="w-full h-full object-cover" />
@@ -513,7 +509,6 @@ const navigateToGallery = () => {
           </div>
 
           <div class="relative flex gap-2">
-            <!-- Media Type Toggle & Upload -->
             <div class="flex flex-col gap-2">
               <div class="flex bg-bg-page rounded-base border border-border-base p-1">
                 <button
@@ -554,7 +549,7 @@ const navigateToGallery = () => {
               </button>
             </div>
 
-            <!-- Text Input -->
+            <!-- AI文本编辑输入 -->
             <div class="relative flex-1">
               <textarea
                 v-model="prompt"
@@ -590,7 +585,7 @@ const navigateToGallery = () => {
         </div>
       </div>
 
-      <!-- Sidebar Toggle Button -->
+      <!-- 右侧边栏显示/隐藏 -->
       <button
         v-if="!showSidebar"
         @click="showSidebar = true"
@@ -600,12 +595,11 @@ const navigateToGallery = () => {
       </button>
     </div>
 
-    <!-- Right Sidebar: History & Gallery -->
+    <!-- 右侧边栏：浏览画廊/历史记录 -->
     <div :class="cn(
       'bg-bg-base border-l border-border-base flex flex-col transition-all duration-300 ease-in-out z-20 shadow-lg',
       showSidebar ? 'w-80 translate-x-0' : 'w-0 translate-x-full opacity-0 overflow-hidden'
     )">
-      <!-- Sidebar Header / Tabs -->
       <div class="flex border-b border-border-base">
         <button
           @click="activeSidebarTab = 'gallery'"
@@ -639,12 +633,10 @@ const navigateToGallery = () => {
         </button>
       </div>
 
-      <!-- Sidebar Content -->
       <div class="flex-1 overflow-y-auto p-4">
         
-        <!-- Gallery Tab Content -->
+        <!-- 图片搜索 -->
         <div v-if="activeSidebarTab === 'gallery'" class="space-y-4">
-          <!-- Search & Filter -->
           <el-input
             v-model="gallerySearch"
             placeholder="搜索画廊..."
@@ -654,7 +646,7 @@ const navigateToGallery = () => {
               <Search class="w-4 h-4 text-text-secondary" />
             </template>
           </el-input>
-          
+          <!-- 图片分类筛选 -->
           <div class="scrollable_flex scrollbar-thin">
             <button
               v-for="cat in ['All', 'Portrait', 'Landscape', 'Sci-Fi', 'Abstract']"
@@ -677,6 +669,7 @@ const navigateToGallery = () => {
           </div>
 
           <div class="grid grid-cols-2 gap-3">
+            <!-- 右侧边栏：卡片信息 -->
             <GalleryCard
               v-for="item in filteredGallery"
               :key="item.id"
@@ -696,7 +689,7 @@ const navigateToGallery = () => {
           </div>
         </div>
 
-        <!-- History Tab Content -->
+        <!-- 历史记录tab区域 -->
         <div v-if="activeSidebarTab === 'history'" class="space-y-4">
           <el-input
             v-model="historySearch"
@@ -719,7 +712,6 @@ const navigateToGallery = () => {
               @click="handleSidebarItemClick(session, 'history')"
             >
               <div class="flex p-3 gap-3">
-                <!-- Thumbnail -->
                 <div class="w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-gray-100 border border-border-base">
                   <img v-if="session.firstImage" :src="session.firstImage" alt="Thumbnail" class="w-full h-full object-cover" />
                   <div v-else class="w-full h-full flex items-center justify-center text-text-secondary">
@@ -727,7 +719,7 @@ const navigateToGallery = () => {
                   </div>
                 </div>
                 
-                <!-- Content -->
+                <!-- 内容区域 -->
                 <div class="flex-1 min-w-0 flex flex-col justify-between">
                   <div class="flex items-start justify-between gap-2">
                     <p class="text-sm text-text-primary font-medium line-clamp-2 leading-snug">
@@ -757,8 +749,6 @@ const navigateToGallery = () => {
         </div>
       </div>
     </div>
-
-    <!-- Lightbox Modal -->
     <div 
       v-if="selectedImage"
       class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-in fade-in duration-200"
@@ -777,8 +767,7 @@ const navigateToGallery = () => {
         @click.stop
       />
     </div>
-
-    <!-- Gallery Modal -->
+    <!-- 卡片内容弹窗 -->
     <GalleryModal
       :isOpen="!!selectedGalleryItem"
       :item="selectedGalleryItem"

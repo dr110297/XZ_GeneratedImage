@@ -29,7 +29,7 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    // TODO: 这里应该调用后端API进行登录验证
+    // 后端接口登录验证
     // const response = await loginAPI(loginForm.value)
 
     // 模拟登录延迟
@@ -44,7 +44,7 @@ const handleLogin = async () => {
   }
 }
 
-// 忘记密码方法
+// 忘记密码
 const handleForgotPassword = () => {
   ElMessage.info('忘记密码功能开发中...')
 }

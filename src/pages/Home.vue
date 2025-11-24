@@ -160,7 +160,6 @@ const navigateToGallery = () => {
       </div>
     </section>
 
-    <!-- Features Section -->
     <section class="bg-white relative" style="padding-top: 6rem; padding-bottom: 6rem;">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="text-center mb-16">
@@ -193,8 +192,7 @@ const navigateToGallery = () => {
         </div>
       </div>
     </section>
-
-    <!-- Template Dialog -->
+    <!-- 卡片内容弹窗 -->
     <GalleryModal
       :isOpen="!!selectedTemplate"
       :item="selectedTemplate"

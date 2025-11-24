@@ -131,7 +131,7 @@ const isMenuOpen = ref(false)
               <span class="text-lg font-bold text-text-primary">xzTimes</span>
             </div>
             <p class="text-sm text-text-secondary">
-              利用AI的力量释放您的创造力。在几秒钟内生成令人惊叹的图像。
+              小智时代专为跨境而生。
             </p>
           </div>
           

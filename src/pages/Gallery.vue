@@ -11,7 +11,7 @@ const activeFilter = ref('全部模型')
 const selectedItem = ref<any>(null)
 const gallerySearch = ref('')
 
-// Mock Data for Gallery
+// 图库模拟数据
 const GALLERY_ITEMS = Array.from({ length: 24 }).map((_, i) => ({
   id: `gallery_${i}`,
   src: [
@@ -70,8 +70,8 @@ const handleFilterChange = (filter: string) => {
   activeFilter.value = filter
 }
 
+// 加载更多
 const handleLoadMore = () => {
-  // TODO: 实现加载更多逻辑
   console.log('加载更多...')
 }
 </script>
@@ -80,7 +80,7 @@ const handleLoadMore = () => {
   <div class="min-h-screen bg-bg-page pt-20 pb-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-8" style="max-width: 1600px;">
 
-      <!-- Sidebar Filters (Desktop) -->
+      <!-- 浏览画廊页面=>侧边栏筛选 -->
       <aside class="w-64 hidden lg:block flex-shrink-0 space-y-8 sticky overflow-y-auto scrollbar-thin scrollbar-thumb-border-base" style="top: 6rem; height: calc(100vh - 6rem); padding-right: 0.5rem;">
         <div>
           <h3 class="font-bold text-text-primary mb-4 flex items-center gap-2">
@@ -123,9 +123,9 @@ const handleLoadMore = () => {
         </div>
       </aside>
 
-      <!-- Main Content -->
+      <!-- 浏览画廊页面=>内容区域 -->
       <div class="flex-1">
-        <!-- Search & Tags -->
+        <!-- 搜索tag -->
         <div class="mb-8 space-y-4">
           <div class="max-w-2xl">
             <el-input
@@ -147,8 +147,9 @@ const handleLoadMore = () => {
           </div>
         </div>
 
-        <!-- Masonry Grid -->
+        <!-- 卡片信息 -->
         <div class="columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6">
+          123333333333333
           <GalleryCard
             v-for="item in filteredItems"
             :key="item.id"
@@ -159,7 +160,6 @@ const handleLoadMore = () => {
           />
         </div>
 
-        <!-- Load More -->
         <div class="mt-12 text-center">
           <el-button @click="handleLoadMore" class="rounded-full px-8 py-3">
             加载更多
@@ -167,8 +167,7 @@ const handleLoadMore = () => {
         </div>
       </div>
     </div>
-
-    <!-- Detail Dialog -->
+    <!-- 卡片内容弹窗 -->
     <GalleryModal
       :isOpen="!!selectedItem"
       :item="selectedItem"
@@ -180,7 +179,7 @@ const handleLoadMore = () => {
 </template>
 
 <style scoped>
-/* 确保横向滚动正常工作 */
+/* 确保横向滚动功能 */
 .scrollbar-hide {
   display: flex;
   flex-wrap: nowrap;

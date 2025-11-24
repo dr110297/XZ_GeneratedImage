@@ -25,7 +25,7 @@ const profileForm = ref({
 // 积分信息
 const credits = ref(850)
 
-// 直接使用所有收藏，不需要文件夹筛选
+// 直接使用所有收藏
 const favorites = computed(() => store.favorites)
 
 const handleUseTemplate = (item: any) => {
@@ -58,7 +58,7 @@ const navigateToGallery = () => {
   router.push('/gallery')
 }
 
-// 处理取消收藏
+// 取消收藏
 const handleUnfavorite = (item: any) => {
   if (item && confirm('确定要取消收藏这张图片吗？')) {
     store.removeFavorite(item.id)
@@ -72,7 +72,7 @@ const handleUnfavorite = (item: any) => {
 
 // 保存个人资料
 const handleSaveProfile = async () => {
-  // TODO: 调用后端 API 保存个人资料
+  // 调用接口保存个人资料
   try {
     // 模拟 API 调用
     await new Promise(resolve => setTimeout(resolve, 500))
@@ -175,15 +175,9 @@ const handleAvatarUpload = () => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-3">
             <div class="space-y-2">
               <label class="text-sm font-medium text-text-secondary flex items-center gap-2">
-                <LinkIcon class="w-4 h-4" /> 个人网站
+                邮箱
               </label>
               <el-input v-model="profileForm.website" placeholder="https://" />
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-text-secondary flex items-center gap-2">
-                <Github class="w-4 h-4" /> GitHub
-              </label>
-              <el-input v-model="profileForm.github" placeholder="username" />
             </div>
           </div>
 
@@ -228,7 +222,7 @@ const handleAvatarUpload = () => {
               />
             </div>
 
-            <!-- 空状态 -->
+            <!-- 收藏为空 -->
             <div v-else class="flex flex-col items-center justify-center text-text-secondary" style="padding-top: 5rem; padding-bottom: 5rem;">
               <div class="w-16 h-16 rounded-full bg-bg-card border border-border-base flex items-center justify-center mb-4">
                 <Heart class="w-8 h-8" style="color: rgba(75, 85, 99, 0.5);" />
@@ -248,8 +242,7 @@ const handleAvatarUpload = () => {
         </div>
       </div>
     </div>
-
-    <!-- Detail Dialog -->
+    <!-- 卡片内容弹窗 -->
     <GalleryModal
       :isOpen="!!selectedFavorite"
       :item="selectedFavorite"
@@ -269,7 +262,7 @@ const handleAvatarUpload = () => {
   padding-right: 8px;
 }
 
-/* 收藏区域图片卡片固定尺寸为250x250px */
+/* 收藏区域图片卡片固定尺寸 */
 .favorites-scroll-container :deep(.group) {
   max-width: 250px;
   font-size: 0.875rem;
