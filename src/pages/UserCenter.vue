@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { User, Heart, Camera, Mail, Link as LinkIcon, Github, Star, Plus } from 'lucide-vue-next'
+import { User, Heart, Camera, Mail, Star, Plus } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { store } from '@/store/favorites'
 import GalleryCard from '@/components/ui/GalleryCard.vue'
