@@ -39,9 +39,13 @@ const STYLES = [
 
 const ASPECT_RATIOS = [
   { label: '1:1', value: '1:1'},
-  { label: '16:9', value: '16:9'},
+  { label: '2:3', value: '2:3'},
+  { label: '3:2', value: '3:2'},
+  { label: '4:5', value: '4:5'},
+  { label: '5:4', value: '5:4'},
   { label: '9:16', value: '9:16'},
-  { label: '4:3', value: '4:3'},
+  { label: '16:9', value: '16:9'},
+  { label: '21:9', value: '21:9'},
 ]
 
 // Types
@@ -70,20 +74,35 @@ const HISTORY_SESSIONS: HistorySession[] = [
     firstPrompt: "一只穿着宇航服的猫在月球上弹吉他，背景是地球，赛博朋克风格，霓虹灯光，高细节，8k分辨率。这只猫的表情非常专注，吉他是透明的发光材质。",
     firstImage: "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
     totalImages: 4,
-    messages: [
+    messages: [//暂时按数组顺序排列历史回复数据
+      // 第一条记录
       {
         id: 'msg_1_1',
-        role: 'user',
+        role: 'user',//用户角色
         content: "一只穿着宇航服的猫在月球上弹吉他，背景是地球，赛博朋克风格，霓虹灯光，高细节，8k分辨率。这只猫的表情非常专注，吉他是透明的发光材质。",
         referenceImage: "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d"
       },
       {
         id: 'msg_1_2',
-        role: 'assistant',
+        role: 'assistant',//回复角色
         images: [
           "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
           "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
           "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
+        ]
+      },
+      // 第二条记录
+      {
+        id: 'msg_2_1',
+        role: 'user',
+        content: "历史数据2",
+        referenceImage: "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/2dd2239d444142d3afc0fb2db153df7b"
+      },
+      {
+        id: 'msg_2_2',
+        role: 'assistant',
+        images: [
+          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/2dd2239d444142d3afc0fb2db153df7b"
         ]
       }
     ]
@@ -443,7 +462,7 @@ const navigateToGallery = () => {
           
           <div v-if="!isAmazonSuite" class="flex items-center gap-2 bg-bg-page p-1 rounded-base border border-border-base mb-4">
             <button
-              v-for="num in [1, 2, 3, 4]"
+              v-for="num in [1, 2, 4, 8]"
               :key="num"
               @click="imageCount = num"
               :class="cn(

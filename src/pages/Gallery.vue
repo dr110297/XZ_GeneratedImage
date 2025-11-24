@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, SlidersHorizontal } from 'lucide-vue-next'
+import { Search, SlidersHorizontal, ImageOff } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import GalleryCard from '@/components/ui/GalleryCard.vue'
 import GalleryModal from '@/components/ui/GalleryModal.vue'
@@ -279,7 +279,7 @@ const handleLoadMore = async () => {
         </div>
 
         <!-- 卡片信息 -->
-        <div class="columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6">
+        <div v-if="filteredItems.length > 0" class="columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6">
           <GalleryCard
             v-for="item in filteredItems"
             :key="item.id"
@@ -290,7 +290,26 @@ const handleLoadMore = async () => {
           />
         </div>
 
-        <div class="mt-12 text-center">
+        <!-- 空状态 -->
+        <div v-else class="flex flex-col items-center justify-center py-20 px-4">
+          <div class="w-24 h-24 rounded-full bg-bg-card border-2 border-border-base flex items-center justify-center mb-6 shadow-sm">
+            <ImageOff class="w-12 h-12 text-text-secondary" style="opacity: 0.5;" />
+          </div>
+          <h3 class="text-xl font-bold text-text-primary mb-2">暂无图片</h3>
+          <p class="text-text-secondary mb-6 text-center max-w-md">
+            {{ gallerySearch ? `未找到与 "${gallerySearch}" 相关的内容` : '当前筛选条件下没有找到图片' }}
+          </p>
+          <div class="flex gap-3">
+            <el-button @click="gallerySearch = ''; activeStyle = ''; activeFilter = '全部模型'" class="rounded-base">
+              清除筛选
+            </el-button>
+            <el-button type="primary" @click="router.push('/generate')" class="rounded-base">
+              去生成图片
+            </el-button>
+          </div>
+        </div>
+
+        <div v-if="filteredItems.length > 0" class="mt-12 text-center">
           <el-button @click="handleLoadMore" class="rounded-full px-8 py-3">
             加载更多
           </el-button>

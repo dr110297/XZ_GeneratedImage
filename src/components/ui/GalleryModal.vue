@@ -128,13 +128,13 @@ const copyPrompt = () => {
         
         <div class="flex gap-3 ml-auto">
           <!-- <button 
-            @click="$emit('edit', item)"
+            @click="$emit('use', item)"
             class="el-button el-button-default px-4 py-2 rounded-base"
           >
-            编辑内容
+            模板生成
           </button> -->
           <button 
-            @click="$emit('use', item)"
+            @click="$emit('edit', item)"
             class="el-button el-button-primary px-4 py-2 rounded-base"
           >
             使用此模板
