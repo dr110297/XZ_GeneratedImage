@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { User, Heart, Camera, Mail, Star, Plus } from 'lucide-vue-next'
+import { User, Heart, Camera, Mail, Star, Plus, Home } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { store } from '@/store/favorites'
 import GalleryCard from '@/components/ui/GalleryCard.vue'
@@ -95,6 +95,18 @@ const handleAvatarUpload = () => {
 
 <template>
   <div class="p-4 max-w-7xl mx-auto">
+    <!-- 回到首页按钮 -->
+    <div class="mb-4">
+      <button
+        @click="router.push('/')"
+        class="flex items-center gap-2 px-4 py-2 rounded-base bg-primary/10 hover:bg-primary hover:text-white text-primary border border-primary/20 hover:border-primary transition-all text-sm font-medium shadow-sm"
+        title="回到首页"
+      >
+        <Home class="w-4 h-4" />
+        <span>回到首页</span>
+      </button>
+    </div>
+
     <!-- Header -->
     <div class="bg-bg-base rounded-base border border-border-base p-4 shadow-lg mb-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-6" style="backdrop-filter: blur(12px); background-color: rgba(255, 255, 255, 0.5);">
       <div class="flex items-center gap-6">

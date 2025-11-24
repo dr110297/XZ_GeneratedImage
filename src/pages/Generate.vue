@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { 
-  Image as ImageIcon, 
-  Download, 
+import {
+  Image as ImageIcon,
+  Download,
   Wand2,
   X,
   Palette,
@@ -18,7 +18,8 @@ import {
   Search,
   Grid,
   MessageSquare,
-  User
+  User,
+  Home
 } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'vue-router'
@@ -368,9 +369,19 @@ const navigateToGallery = () => {
   <div class="flex h-[calc(100vh-64px)] md:h-screen md:pt-0 bg-bg-page overflow-hidden">
     <!-- 创作工具 -->
     <div class="w-80 bg-bg-base border-r border-border-base flex flex-col z-20 shadow-lg hidden lg:flex">
-      <div class="p-6 border-b border-border-base flex items-center gap-2 text-primary">
-        <Sparkles class="w-5 h-5" />
-        <h2 class="font-bold text-lg">创作工具</h2>
+      <div class="p-6 border-b border-border-base flex items-center justify-between">
+        <div class="flex items-center gap-2 text-primary">
+          <Sparkles class="w-5 h-5" />
+          <h2 class="font-bold text-lg">创作工具</h2>
+        </div>
+        <button
+          @click="router.push('/')"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-base bg-primary/10 hover:bg-primary hover:text-white text-primary border border-primary/20 hover:border-primary transition-all text-sm font-medium"
+          title="回到首页"
+        >
+          <Home class="w-4 h-4" />
+          <span>首页</span>
+        </button>
       </div>
       
       <div class="flex-1 overflow-y-auto p-6 space-y-8">
