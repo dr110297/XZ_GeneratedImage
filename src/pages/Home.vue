@@ -122,12 +122,6 @@ const navigateToGallery = () => {
             >
               开始创作 <ArrowRight class="w-5 h-5 ml-2" />
             </el-button>
-            <el-button
-              @click="navigateToGallery"
-              class="rounded-full px-8 py-4 text-lg"
-            >
-              浏览画廊
-            </el-button>
           </div>
         </div>
       </div>
@@ -139,11 +133,10 @@ const navigateToGallery = () => {
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-2xl font-bold text-text-primary">热门模板</h2>
           <el-button
-            text
             @click="navigateToGallery"
-            class="text-primary font-medium flex items-center gap-1"
+            class="rounded-full px-8 py-4 text-lg"
           >
-            浏览更多 <ArrowRight class="w-4 h-4" />
+            浏览画廊<ArrowRight class="w-4 h-4" />
           </el-button>
         </div>
 
