@@ -81,9 +81,8 @@ const HISTORY_SESSIONS: HistorySession[] = [
         role: 'assistant',
         images: [
           "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
-          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/2dd2239d444142d3afc0fb2db153df7b",
-          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/00bdd1645172419eb35df7fa3dd99321",
-          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/c19331b743f442838b6dd7026c17ae0f"
+          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
+          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/93629169d5504c54b49b89961ff3a71d",
         ]
       }
     ]
@@ -104,7 +103,6 @@ const HISTORY_SESSIONS: HistorySession[] = [
         role: 'assistant',
         images: [
           "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/2dd2239d444142d3afc0fb2db153df7b",
-          "https://public.youware.com/users-website-assets/prod/faf7c4ec-0acf-42c0-b174-678e35ae8c70/00bdd1645172419eb35df7fa3dd99321"
         ]
       }
     ]
@@ -280,7 +278,20 @@ const toggleAmazonSuite = () => {
     imageCount.value = 1
   }
 }
-
+const handleDownloadToLocal = (imageUrl: string) => {
+  console.log('下载图片到本地:', imageUrl)
+  
+  // 创建临时链接进行下载
+  const link = document.createElement('a')
+  link.href = imageUrl
+  link.download = `aiImage-${Date.now()}.jpg`
+  link.target = '_blank'
+  link.rel = 'noopener noreferrer'
+  
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 const handleMediaUpload = () => {
   const input = document.createElement('input')
   input.type = 'file'
@@ -486,6 +497,7 @@ const navigateToGallery = () => {
                 <p v-if="msg.content" class="text-sm whitespace-pre-wrap">{{ msg.content }}</p>
               </div>
               
+              <!-- 对话消息图片区域 -->
               <div v-if="msg.images && msg.images.length > 0" class="flex flex-wrap gap-4 w-full">
                 <div v-for="(img, idx) in msg.images" :key="idx" class="relative group rounded-xl overflow-hidden shadow-md border border-border-base bg-white max-w-[300px] flex-shrink-0">
                   <img 
@@ -495,7 +507,11 @@ const navigateToGallery = () => {
                     @click="selectedImage = img"
                   />
                   <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                    <button class="p-1.5 bg-black/50 text-white rounded-full hover:bg-primary transition-colors">
+                    <button 
+                      @click.stop="handleDownloadToLocal(img)"
+                      class="p-1.5 bg-black/50 text-white rounded-full hover:bg-green-500 transition-colors"
+                      title="下载图片到本地"
+                    >
                       <Download class="w-4 h-4" />
                     </button>
                   </div>
