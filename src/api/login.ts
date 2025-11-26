@@ -48,6 +48,12 @@ export interface CaptchaResult {
   img: string
 }
 
+// 通用响应结果
+export interface BaseResult {
+  code: number
+  msg: string
+}
+
 /**
  * 登录方法
  * @param username 用户名
@@ -154,7 +160,7 @@ export function register(data: {
   code?: string
   uuid?: string
 }) {
-  return service({
+  return service<BaseResult>({
     url: '/register',
     headers: {
       isToken: false
