@@ -1,19 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { Phone } from 'lucide-vue-next'
+import { Phone, ShieldCheck } from 'lucide-vue-next'
 import { ElMessage } from 'element-plus'
+import { loginAndSaveToken, getCaptcha } from '@/api/login'
 
 const router = useRouter()
 
 // 表单数据
 const loginForm = ref({
   username: '',
-  password: ''
+  password: '',
+  code: '',
+  uuid: ''
 })
+
+// 验证码相关
+const captchaImage = ref('')
+const captchaEnabled = ref(true)
 
 // 加载状态
 const loading = ref(false)
+const captchaLoading = ref(false)
+
+// 获取验证码
+const refreshCaptcha = async () => {
+  captchaLoading.value = true
+  try {
+    const res = await getCaptcha()
+    if (res.code === 200) {
+      captchaEnabled.value = res.captchaEnabled !== false
+      if (captchaEnabled.value) {
+        captchaImage.value = 'data:image/gif;base64,' + res.img
+        loginForm.value.uuid = res.uuid
+      }
+    }
+  } catch (error) {
+    console.error('获取验证码失败:', error)
+  } finally {
+    captchaLoading.value = false
+  }
+}
 
 // 登录方法
 const handleLogin = async () => {
@@ -25,20 +52,36 @@ const handleLogin = async () => {
     ElMessage.warning('请输入密码')
     return
   }
+  if (captchaEnabled.value && !loginForm.value.code) {
+    ElMessage.warning('请输入验证码')
+    return
+  }
 
   loading.value = true
 
   try {
-    // 后端接口登录验证
-    // const response = await loginAPI(loginForm.value)
+    const res = await loginAndSaveToken(
+      loginForm.value.username,
+      loginForm.value.password,
+      loginForm.value.code,
+      loginForm.value.uuid
+    )
 
-    // 模拟登录延迟
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    ElMessage.success('登录成功')
-    router.push('/')
-  } catch (error) {
-    ElMessage.error('登录失败，请检查用户名和密码')
+    if (res.code === 200) {
+      ElMessage.success('登录成功')
+      router.push('/')
+    } else {
+      // 登录失败，刷新验证码
+      if (captchaEnabled.value) {
+        refreshCaptcha()
+      }
+    }
+  } catch (error: any) {
+    console.error('登录失败:', error)
+    // 登录失败，刷新验证码
+    if (captchaEnabled.value) {
+      refreshCaptcha()
+    }
   } finally {
     loading.value = false
   }
@@ -48,6 +91,11 @@ const handleLogin = async () => {
 const handleForgotPassword = () => {
   ElMessage.info('忘记密码功能开发中...')
 }
+
+// 组件挂载时获取验证码
+onMounted(() => {
+  refreshCaptcha()
+})
 </script>
 
 <template>
@@ -90,6 +138,41 @@ const handleForgotPassword = () => {
           size="large"
           show-password
         />
+      </div>
+
+      <!-- 验证码 -->
+      <div v-if="captchaEnabled">
+        <label class="block text-sm font-medium text-text-secondary mb-1">验证码</label>
+        <div class="flex gap-3">
+          <el-input
+            v-model="loginForm.code"
+            type="text"
+            placeholder="请输入验证码"
+            size="large"
+            class="flex-1"
+            @keyup.enter="handleLogin"
+          >
+            <template #prefix>
+              <ShieldCheck class="w-5 h-5 text-text-placeholder" />
+            </template>
+          </el-input>
+          <div
+            class="flex items-center justify-center bg-white border border-border-base rounded-lg transition-colors overflow-hidden"
+            style="width: 8rem; height: 40px; cursor: pointer;"
+            @click="refreshCaptcha"
+            title="点击刷新验证码"
+          >
+            <img
+              v-if="captchaImage"
+              :src="captchaImage"
+              alt="验证码"
+              class="h-full w-full object-cover"
+            />
+            <span v-else class="text-text-secondary text-sm">
+              {{ captchaLoading ? '加载中...' : '点击获取' }}
+            </span>
+          </div>
+        </div>
       </div>
 
       <el-button

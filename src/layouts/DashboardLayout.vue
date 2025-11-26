@@ -1,17 +1,40 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { Image as ImageIcon, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { cn } from '@/lib/utils'
+import { logoutAndClear } from '@/api/login'
 import logo from '@/assets/logo.png'
 
 const route = useRoute()
-const isCollapsed = ref(false)
+const router = useRouter()
+const isCollapsed = ref(true)
 
 const navItems = [
   { icon: ImageIcon, label: '生成', href: '/generate' },
   { icon: User, label: '个人资料', href: '/profile' },
 ]
+
+// 退出登录
+const handleLogout = async () => {
+  try {
+    await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+
+    await logoutAndClear()
+    ElMessage.success('退出登录成功')
+    router.push('/login')
+  } catch (error) {
+    // 用户点击取消或退出登录失败
+    if (error !== 'cancel') {
+      console.error('退出登录失败:', error)
+    }
+  }
+}
 </script>
 
 <template>
@@ -61,7 +84,8 @@ const navItems = [
       </nav>
 
       <div class="p-4 border-t border-border-base">
-        <button 
+        <button
+          @click="handleLogout"
           :class="cn(
             'flex items-center gap-3 px-3 py-2 w-full rounded-base text-sm font-medium text-text-secondary hover:text-danger hover:bg-danger/10 transition-colors',
             isCollapsed && 'justify-center px-2'

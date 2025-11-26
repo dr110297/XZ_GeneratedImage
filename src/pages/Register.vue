@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { Phone, ShieldCheck } from 'lucide-vue-next'
 import { ElMessage } from 'element-plus'
+import { register, getCaptcha } from '@/api/login'
 
 const router = useRouter()
 
@@ -11,14 +12,17 @@ const registerForm = ref({
   username: '',
   password: '',
   confirmPassword: '',
-  captcha: ''
+  code: '',
+  uuid: ''
 })
 
-// 验证码图片
-const captchaImage = ref('A 7 X 9')
+// 验证码相关
+const captchaImage = ref('')
+const captchaEnabled = ref(true)
 
 // 加载状态
 const loading = ref(false)
+const captchaLoading = ref(false)
 
 // 验证密码是否一致
 const passwordsMatch = computed(() => {
@@ -26,17 +30,23 @@ const passwordsMatch = computed(() => {
   return registerForm.value.password === registerForm.value.confirmPassword
 })
 
-// 刷新验证码
-const refreshCaptcha = () => {
-  // 模拟生成新的验证码
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  let newCaptcha = ''
-  for (let i = 0; i < 4; i++) {
-    newCaptcha += chars[Math.floor(Math.random() * chars.length)]
-    if (i < 3) newCaptcha += ' '
+// 获取验证码
+const refreshCaptcha = async () => {
+  captchaLoading.value = true
+  try {
+    const res = await getCaptcha()
+    if (res.code === 200) {
+      captchaEnabled.value = res.captchaEnabled !== false
+      if (captchaEnabled.value) {
+        captchaImage.value = 'data:image/gif;base64,' + res.img
+        registerForm.value.uuid = res.uuid
+      }
+    }
+  } catch (error) {
+    console.error('获取验证码失败:', error)
+  } finally {
+    captchaLoading.value = false
   }
-  captchaImage.value = newCaptcha
-  ElMessage.info('验证码已刷新')
 }
 
 // 注册方法
@@ -58,7 +68,7 @@ const handleRegister = async () => {
     ElMessage.error('两次输入的密码不一致')
     return
   }
-  if (!registerForm.value.captcha) {
+  if (captchaEnabled.value && !registerForm.value.code) {
     ElMessage.warning('请输入验证码')
     return
   }
@@ -66,20 +76,38 @@ const handleRegister = async () => {
   loading.value = true
 
   try {
-    // 后端接口注册
-    // const response = await registerAPI(registerForm.value)
+    const res = await register({
+      username: registerForm.value.username,
+      password: registerForm.value.password,
+      confirmPassword: registerForm.value.confirmPassword,
+      code: registerForm.value.code,
+      uuid: registerForm.value.uuid
+    })
 
-    // 模拟注册延迟
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    ElMessage.success('注册成功！')
-    router.push('/login')
-  } catch (error) {
-    ElMessage.error('注册失败，请稍后再试')
+    if (res.code === 200) {
+      ElMessage.success('注册成功！')
+      router.push('/login')
+    } else {
+      // 注册失败，刷新验证码
+      if (captchaEnabled.value) {
+        refreshCaptcha()
+      }
+    }
+  } catch (error: any) {
+    console.error('注册失败:', error)
+    // 注册失败，刷新验证码
+    if (captchaEnabled.value) {
+      refreshCaptcha()
+    }
   } finally {
     loading.value = false
   }
 }
+
+// 组件挂载时获取验证码
+onMounted(() => {
+  refreshCaptcha()
+})
 </script>
 
 <template>
@@ -128,15 +156,16 @@ const handleRegister = async () => {
         <p v-if="!passwordsMatch" class="text-xs mt-1" style="color: var(--color-danger);">两次输入的密码不一致</p>
       </div>
 
-      <div>
+      <div v-if="captchaEnabled">
         <label class="block text-sm font-medium text-text-secondary mb-1">验证码</label>
         <div class="flex gap-3">
           <el-input
-            v-model="registerForm.captcha"
+            v-model="registerForm.code"
             type="text"
             placeholder="请输入验证码"
             size="large"
             class="flex-1"
+            @keyup.enter="handleRegister"
           >
             <template #prefix>
               <ShieldCheck class="w-5 h-5 text-text-placeholder" />
@@ -146,13 +175,17 @@ const handleRegister = async () => {
             class="flex items-center justify-center bg-white border border-border-base rounded-lg transition-colors overflow-hidden"
             style="width: 8rem; height: 40px; cursor: pointer;"
             @click="refreshCaptcha"
+            title="点击刷新验证码"
           >
-            <div
-              class="text-lg font-bold text-text-secondary select-none flex items-center justify-center bg-white"
-              style="width: 100%; height: 100%; letter-spacing: 0.1em; font-style: italic;"
-            >
-              {{ captchaImage }}
-            </div>
+            <img
+              v-if="captchaImage"
+              :src="captchaImage"
+              alt="验证码"
+              class="h-full w-full object-cover"
+            />
+            <span v-else class="text-text-secondary text-sm">
+              {{ captchaLoading ? '加载中...' : '点击获取' }}
+            </span>
           </div>
         </div>
       </div>
